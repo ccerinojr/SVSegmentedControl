@@ -155,7 +155,8 @@
         self.segmentWidth = 0;
         int i = 0;
         for(NSString *titleString in self.sectionTitles) {
-            CGFloat stringWidth = [titleString sizeWithFont:self.font].width+(self.titleEdgeInsets.left+self.titleEdgeInsets.right+self.thumbEdgeInset.left+self.thumbEdgeInset.right);
+           
+           CGFloat stringWidth = [titleString sizeWithAttributes:@{NSFontAttributeName: self.font}].width+(self.titleEdgeInsets.left+self.titleEdgeInsets.right+self.thumbEdgeInset.left+self.thumbEdgeInset.right);
             
             if(self.sectionImages.count > i)
                 stringWidth+=[(UIImage*)[self.sectionImages objectAtIndex:i] size].width+5;
@@ -592,7 +593,7 @@
 	int i = 0;
 	
 	for(NSString *titleString in self.sectionTitles) {
-        CGSize titleSize = [titleString sizeWithFont:self.font];
+        CGSize titleSize = [titleString sizeWithAttributes:@{NSFontAttributeName: self.font}];
         CGFloat titleWidth = titleSize.width;
         CGFloat posY = round((CGRectGetHeight(rect)-self.font.ascender-5)/2)+self.titleEdgeInsets.top-self.titleEdgeInsets.bottom;
         //NSLog(@"%@ %f, height=%f, descender=%f, ascender=%f, lineHeight=%f", self.font.familyName, self.font.pointSize, titleSize.height, self.font.descender, self.font.ascender, self.font.lineHeight);
@@ -615,7 +616,7 @@
 #if __IPHONE_OS_VERSION_MIN_REQUIRED < 60000
 		[titleString drawAtPoint:CGPointMake(titlePosX+imageWidth, posY) forWidth:self.segmentWidth withFont:self.font lineBreakMode:UILineBreakModeTailTruncation];
 #else
-        [titleString drawAtPoint:CGPointMake(titlePosX+imageWidth, posY) forWidth:self.segmentWidth withFont:self.font lineBreakMode:NSLineBreakByClipping];
+      [titleString drawInRect:CGRectMake(titlePosX+imageWidth, posY, self.segmentWidth, [titleString sizeWithAttributes:@{NSFontAttributeName: self.font}].height) withAttributes:@{NSFontAttributeName: self.font}];
 #endif
 		i++;
 	}
@@ -653,7 +654,7 @@
     
     // Create the bitmap with just an alpha channel.
     // When created, it has value 0 at every pixel.
-    CGContextRef gc = CGBitmapContextCreate(NULL, scaledSize.width, scaledSize.height, 8, scaledSize.width, NULL, kCGImageAlphaOnly);
+    CGContextRef gc = CGBitmapContextCreate(NULL, scaledSize.width, scaledSize.height, 8, scaledSize.width, NULL,  kCGBitmapAlphaInfoMask & kCGImageAlphaOnly);
     
     // Adjust the current transform matrix for the screen scale.
     CGContextScaleCTM(gc, scale, scale);
